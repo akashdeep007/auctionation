@@ -1,5 +1,6 @@
-package com.akcitra.Auctionation.players;
+package com.akcitra.Auctionation.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
@@ -9,12 +10,15 @@ public class Player {
     private final String name;
     private final String team;
     private final Double rating;
+    private final String role;
 
-    public Player(ObjectId _id, String name, String team, Double rating) {
+
+    public Player(ObjectId _id, String name, String team, Double rating, String role) {
         this._id = _id;
         this.name = name;
         this.team = team;
         this.rating = rating;
+        this.role = role;
     }
 
     public String getName() {
