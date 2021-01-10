@@ -38,22 +38,10 @@ public class AuthService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(10);
         user.setPassword(encoder.encode(user.getPassword()));
         userRepository.save(user);
-        return ResponseEntity.ok(new ResponseObject(new AuthResponseData("User has been created")));
+        String token = jwtUtils.encodeJwt(new AuthenticationRequest(user.getUsername(), user.getPassword()));
+        return ResponseEntity.ok(new ResponseObject(new AuthResponseData("User has been created", token)));
     }
 
-//    public ResponseEntity<ResponseObject> loginUser(AucUser user) throws JSONException {
-//        AucUser tempUser = userRepository.findByUsername(user.getUsername());
-//        if(tempUser == null) return ResponseEntity.status(401).body(new ResponseObject(404,new AuthResponseData("User doesn't exist")));
-//        String token = JWT.create()
-//                .withSubject(tempUser.get_id())
-//                .withClaim("email", tempUser.getEmail())
-//                .withClaim("name", tempUser.getUsername())
-//                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-//                .sign(Algorithm.HMAC512(SECRET.getBytes()));
-//        System.out.println(token.toString());
-//
-//        return ResponseEntity.status(200).body(new ResponseObject(401, new AuthResponseData("User Logged In", token.toString())));
-//    }
 public ResponseEntity<ResponseObject> loginUser(AuthenticationRequest user) throws Exception {
     try{
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
