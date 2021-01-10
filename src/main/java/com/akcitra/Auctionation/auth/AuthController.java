@@ -1,11 +1,11 @@
 package com.akcitra.Auctionation.auth;
 
 import com.akcitra.Auctionation.models.AucUser;
-import com.akcitra.Auctionation.models.ResponseObject;
-import org.json.JSONArray;
+import com.akcitra.Auctionation.models.AuthenticationRequest;
+import com.akcitra.Auctionation.models.responses.ResponseObject;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,14 +16,14 @@ public class AuthController {
     @Autowired private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseObject createUser(@RequestBody AucUser aucUser){
+    public ResponseEntity<ResponseObject> createUser(@RequestBody AucUser aucUser){
         System.out.println(aucUser.toString());
         return authService.createUser(aucUser);
     }
 
     @PostMapping("/login")
-    public ResponseObject loginUser(@RequestBody AucUser aucUser) throws JSONException {
-        return authService.loginUser(aucUser);
+    public ResponseEntity<ResponseObject> loginUser(@RequestBody AuthenticationRequest authenticationRequest) throws Exception {
+        return authService.loginUser(authenticationRequest);
     }
 }
 

@@ -3,6 +3,12 @@ package com.akcitra.Auctionation.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class AucUser {
     @Id
@@ -18,13 +24,18 @@ public class AucUser {
     private String team_name;
     private Team team;
 
-    public AucUser(){}
+    public AucUser(){ }
+
+
+
     public AucUser(ObjectId _id, String username, String password, String email) {
-        this._id = _id;
         this.username = username;
         this.password = password;
+        this._id = _id;
         this.email = email;
     }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public void set_id(ObjectId _id) { this._id = _id; } //Set Id
     public String get_id() { return this._id.toString(); } //Get Id
