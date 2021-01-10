@@ -1,11 +1,11 @@
-package com.akcitra.Auctionation.user;
+package com.akcitra.Auctionation.auth;
 
-import com.akcitra.Auctionation.models.MongoUser;
+import com.akcitra.Auctionation.models.AucUser;
+import com.akcitra.Auctionation.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -23,8 +23,7 @@ public class UserAuthService implements org.springframework.security.core.userde
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        MongoUser user = user_repository.findByUsername(s);
-
+        AucUser user = user_repository.findByUsername(s);
         if(user == null) throw new UsernameNotFoundException("User not found.");
         List<SimpleGrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("USER"));
         return new User(user.getUsername(), user.getPassword(), authorities);
