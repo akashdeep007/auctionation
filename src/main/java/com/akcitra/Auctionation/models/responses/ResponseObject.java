@@ -15,6 +15,10 @@ public class ResponseObject {
         this.data = data;
     }
 
+    public ResponseObject(Integer code) {
+        this.code = code;
+    }
+
     public ResponseData getData() {
         return data;
     }

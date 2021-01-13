@@ -9,6 +9,7 @@ import com.akcitra.Auctionation.util.JwtUtils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,10 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 
-import static com.akcitra.Auctionation.security.SecurityConstants.EXPIRATION_TIME;
-import static com.akcitra.Auctionation.security.SecurityConstants.SECRET;
 
 @Service
 public class AuthService {
