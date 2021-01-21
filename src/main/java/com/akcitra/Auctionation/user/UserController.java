@@ -1,12 +1,16 @@
 package com.akcitra.Auctionation.user;
 
 import com.akcitra.Auctionation.models.AucUser;
+import com.akcitra.Auctionation.models.Bid;
 import com.akcitra.Auctionation.models.responses.ResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import com.akcitra.Auctionation.models.responses.UserData;
 import com.akcitra.Auctionation.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -32,6 +36,11 @@ public class UserController {
     public AucUser setUserDetails(@RequestHeader("Authorization") String token, @RequestBody AucUser aucUser){
         userRepository.save(aucUser);
         return aucUser;
+    }
+
+    @GetMapping("/bids")
+    public ResponseEntity<List<Bid>> getUserBids(@RequestHeader("Authorization") String token){
+        return userService.getUserBids(token);
     }
 
 
