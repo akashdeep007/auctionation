@@ -1,15 +1,11 @@
 package com.akcitra.Auctionation.auth;
 
 import com.akcitra.Auctionation.models.AucUser;
-import com.akcitra.Auctionation.models.AuthenticationRequest;
+import com.akcitra.Auctionation.models.requests.AuthenticationRequest;
 import com.akcitra.Auctionation.models.responses.AuthResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import com.akcitra.Auctionation.user.UserRepository;
 import com.akcitra.Auctionation.util.JwtUtils;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

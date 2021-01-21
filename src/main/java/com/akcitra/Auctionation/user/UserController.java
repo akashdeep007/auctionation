@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PutMapping
-    public AucUser setUserDetails(@PathVariable("id") String username, @RequestBody AucUser aucUser){
+    public AucUser setUserDetails(@RequestHeader("Authorization") String token, @RequestBody AucUser aucUser){
         userRepository.save(aucUser);
         return aucUser;
     }

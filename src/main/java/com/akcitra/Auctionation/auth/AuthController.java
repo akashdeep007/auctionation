@@ -1,9 +1,8 @@
 package com.akcitra.Auctionation.auth;
 
 import com.akcitra.Auctionation.models.AucUser;
-import com.akcitra.Auctionation.models.AuthenticationRequest;
+import com.akcitra.Auctionation.models.requests.AuthenticationRequest;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
-import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

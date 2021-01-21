@@ -1,7 +1,6 @@
 package com.akcitra.Auctionation.util;
 
-import com.akcitra.Auctionation.models.AucUser;
-import com.akcitra.Auctionation.models.AuthenticationRequest;
+import com.akcitra.Auctionation.models.requests.AuthenticationRequest;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.Claim;

@@ -1,4 +1,4 @@
-package com.akcitra.Auctionation.models;
+package com.akcitra.Auctionation.models.requests;
 
 public class AuthenticationRequest {
     private String username;
