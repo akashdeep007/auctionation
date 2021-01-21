@@ -23,10 +23,9 @@ public class AucUser {
     private Integer age;
     private String team_name;
     private Team team;
+    private Double wallet;
 
     public AucUser(){ }
-
-
 
     public AucUser(ObjectId _id, String username, String password, String email) {
         this.username = username;
@@ -34,6 +33,10 @@ public class AucUser {
         this._id = _id;
         this.email = email;
     }
+
+    public Double getWallet() { return wallet; }
+    public void setWallet(Double wallet) { this.wallet = wallet; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 

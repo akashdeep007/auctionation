@@ -17,8 +17,8 @@ public class AuctionController {
     @Autowired AuctionService auctionService;
 
     @PostMapping("/bid")
-    public ResponseEntity<ResponseObject> bid(@PathVariable String roomId, @RequestBody Bid bid) throws ExecutionException, InterruptedException {
-        return auctionService.addBid(roomId, bid);
+    public ResponseEntity<ResponseObject> bid(@RequestHeader("Authorization") String token, @PathVariable String roomId, @RequestBody Bid bid) throws ExecutionException, InterruptedException {
+        return auctionService.addBid(token, roomId, bid);
     }
 
     @PostMapping("/create")
