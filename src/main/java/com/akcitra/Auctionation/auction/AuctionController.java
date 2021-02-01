@@ -16,8 +16,9 @@ public class AuctionController {
 
     @Autowired AuctionService auctionService;
 
-    @PostMapping("/bid")
+    @PostMapping("/room/{roomId}")
     public ResponseEntity<ResponseObject> bid(@RequestHeader("Authorization") String token, @PathVariable String roomId, @RequestBody Bid bid) throws ExecutionException, InterruptedException {
+        System.out.println(bid.getUsername());
         return auctionService.addBid(token, roomId, bid);
     }
 
@@ -26,8 +27,8 @@ public class AuctionController {
         return auctionService.createAuction(auctionCreateRequest);
     }
 
-    @PostMapping("/room")
-    public ResponseEntity<ResponseObject> enterRoom(@RequestHeader("Authorization") String token, @PathVariable String roomId) throws ExecutionException, InterruptedException {
-        return auctionService.getRoom(token, roomId);
+    @GetMapping("/room/{room_name}")
+    public ResponseEntity<ResponseObject> enterRoom(@RequestHeader("Authorization") String token, @PathVariable String room_name) throws ExecutionException, InterruptedException {
+        return auctionService.getRoom(token, room_name);
     }
 }
