@@ -29,8 +29,8 @@ public class AuctionationSecurityConfiguration extends WebSecurityConfigurerAdap
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/api/auth/**").permitAll().and()
-                .authorizeRequests().antMatchers("/api/players/**").authenticated().and()
-                .authorizeRequests().antMatchers("/api/user/**").authenticated().and()
+//                .authorizeRequests().antMatchers("/api/players/**").authenticated().and()
+                .authorizeRequests().antMatchers("/api/user/**").permitAll().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().csrf().disable().cors();
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }

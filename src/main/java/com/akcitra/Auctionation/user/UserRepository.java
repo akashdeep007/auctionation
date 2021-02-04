@@ -1,6 +1,7 @@
 package com.akcitra.Auctionation.user;
 
 import com.akcitra.Auctionation.models.AucUser;
+import com.akcitra.Auctionation.models.Auction;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserRepository extends MongoRepository<AucUser, String> {

@@ -51,7 +51,9 @@ public class AuctionService {
 //            bidRepository.save(bid);
 //            return ResponseEntity.status(500).body(new ResponseObject(500, new ResponseData("Expired")));
 //        }
+        auctionReference.update("max_bid", bid.getBid());
         bid.setUserId(aucUser.get_id());
+        bid.setUsername(username);
         bidsRef.document().set(bid); //Adds Bid in the Firebase
 
         return ResponseEntity.status(200).body(new ResponseObject(69, new ResponseData("Bid Added")));
