@@ -7,12 +7,21 @@ public class UserData extends ResponseData{
     private String name;
     private String email;
     private ArrayList<String> invitations;
+    private Double wallet;
 
     public String getUsername() {
         return username;
     }
     public void setUsername(String username) {
         this.username = username;
+    }
+
+
+    public UserData(String message, String username, String name, Double wallet) {
+        super(message);
+        this.username = username;
+        this.name = name;
+        this.wallet = wallet;
     }
 
     public UserData(String name, String email, String message) {
@@ -44,4 +53,7 @@ public class UserData extends ResponseData{
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public Double getWallet() { return wallet; }
+    public void setWallet(Double wallet) { this.wallet = wallet; }
 }

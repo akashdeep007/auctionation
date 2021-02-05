@@ -28,11 +28,12 @@ public class UserController {
     @GetMapping
     public ResponseObject getUserDetails(@RequestHeader("Authorization") String token){
         String username = jwtUtils.extractUsername(token.substring(7));
+        System.out.println(username);
         if(username == null) return new ResponseObject(404, new ResponseData("Token not Valid"));
         AucUser aucUser = userRepository.findByUsername(username);
         System.out.println(aucUser.getUsername());
         if(aucUser == null) return new ResponseObject(404, new ResponseData("User not found"));
-        return new ResponseObject(69, new UserData(aucUser.getName(), aucUser.getUsername(),aucUser.getUsername(), "User Found!"));
+        return new ResponseObject(69, new UserData("User Found", aucUser.getUsername(), aucUser.getName(), aucUser.getWallet()));
     }
 
     @PutMapping

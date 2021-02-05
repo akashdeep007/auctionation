@@ -10,7 +10,8 @@ public class Player {
     private final String name;
     private final String team;
     private final Double rating;
-    private final String role;
+    private String role;
+    private String image_url;
 
 
     public Player(ObjectId _id, String name, String team, Double rating, String role) {
@@ -35,4 +36,10 @@ public class Player {
     public Double getRating() {
         return rating;
     }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public String getImage_url() { return image_url; }
+    public void setImage_url(String image_url) { this.image_url = image_url; }
 }

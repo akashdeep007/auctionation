@@ -15,23 +15,18 @@ public class Auction {
     private Long endTime;
     private Long startTime;
     private ArrayList<String> participants;
+    private String item_id;
 
-    public Auction(String auctionName, Long startTime, Long endTime, ArrayList<String> participants) {
+    public Auction() { }
+
+    public Auction(String auctionName, Long endTime, Long startTime, ArrayList<String> participants, String item_id) {
         this.auctionName = auctionName;
         this.endTime = endTime;
         this.startTime = startTime;
         this.participants = participants;
+        this.item_id = item_id;
     }
 
-    public Auction(ObjectId _id, String auctionName, Double currBid, ArrayList<Bid> bidHistory, Long endTime) {
-        this._id = _id;
-        this.auctionName = auctionName;
-        this.currBid = currBid;
-        this.bidHistory = bidHistory;
-        this.endTime = endTime;
-    }
-
-    public Auction() { }
 
     public ArrayList<String> getParticipants() { return participants; }
     public void setParticipants(ArrayList<String> participants) { this.participants = participants; }
@@ -53,5 +48,8 @@ public class Auction {
 
     public Long getEndTime() { return endTime; }
     public void setEndTime(Long endTime) { this.endTime = endTime; }
+
+    public String getItem_id() { return item_id; }
+    public void setItem_id(String item_id) { this.item_id = item_id; }
 
 }

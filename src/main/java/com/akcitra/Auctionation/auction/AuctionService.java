@@ -7,7 +7,6 @@ import com.akcitra.Auctionation.models.requests.AuctionCreateRequest;
 import com.akcitra.Auctionation.models.responses.ResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import com.akcitra.Auctionation.user.UserRepository;
-import com.akcitra.Auctionation.user.UserService;
 import com.akcitra.Auctionation.util.JwtUtils;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -25,7 +24,6 @@ public class AuctionService {
 
     @Autowired JwtUtils jwtUtils;
     @Autowired UserRepository userRepository;
-    @Autowired BidRepository bidRepository;
     @Autowired AuctionRepository auctionRepository;
 
 
@@ -63,14 +61,23 @@ public class AuctionService {
 
 
     public ResponseEntity<ResponseObject> createAuction(AuctionCreateRequest auctionCreateRequest){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+
         //Auction should be created on MongoDB
         Auction newAuction = new Auction(
                 auctionCreateRequest.getAuctionTitle(),
                 auctionCreateRequest.getStartTime(),
                 auctionCreateRequest.getEndTime(),
-                auctionCreateRequest.getParticipants()
+                auctionCreateRequest.getParticipants(),
+                auctionCreateRequest.getItem_id()
         );
         auctionRepository.save(newAuction);
+        newAuction = auctionRepository.findByAuctionName(auctionCreateRequest.getAuctionTitle());
+
+        DocumentReference auctionReference = dbFirestore.collection("auction").document(newAuction.get_id().toString());
+        auctionReference.set(newAuction);
+
+
         return ResponseEntity.status(200).body(new ResponseObject(69, new ResponseData("Auction Created")));
     }
 
