@@ -12,7 +12,7 @@
 	<artifactId>Auctionation</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Auctionation</name>
-	<description>Demo project for Spring Boot</description>
+	<description>EIPL Auction Portal</description>
 
 	<properties>
 		<java.version>11</java.version>
@@ -44,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
+			<artifactId>springfox-boot-starter</artifactId>
 			<version>3.0.0</version>
 		</dependency>
 		<dependency>
@@ -52,7 +52,17 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>3.11.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.firebase</groupId>
+			<artifactId>firebase-admin</artifactId>
+			<version>7.1.0</version>
+		</dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

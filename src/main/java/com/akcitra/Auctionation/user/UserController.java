@@ -1,34 +1,55 @@
 package com.akcitra.Auctionation.user;
 
-import com.akcitra.Auctionation.models.MongoUser;
-import com.akcitra.Auctionation.models.UserDetails;
-import org.bson.types.ObjectId;
+import com.akcitra.Auctionation.auction.AuctionRepository;
+import com.akcitra.Auctionation.models.AucUser;
+import com.akcitra.Auctionation.models.Auction;
+import com.akcitra.Auctionation.models.Bid;
+import com.akcitra.Auctionation.models.responses.ResponseData;
+import com.akcitra.Auctionation.models.responses.ResponseObject;
+import com.akcitra.Auctionation.models.responses.UserData;
+import com.akcitra.Auctionation.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
+@CrossOrigin(origins = {"http://localhost:8081", "http://localhost:8080"})
 @RequestMapping("/api/user")
 public class UserController {
 
-    @Autowired private UserDetailsRepository userDetailsRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private UserService userService;
+    @Autowired private JwtUtils jwtUtils;
+    @Autowired private AuctionRepository auctionRepository;
 
-    public MongoUser createUser(@RequestBody MongoUser user){
-        return userService.createUser(user);
+    @GetMapping
+    public ResponseObject getUserDetails(@RequestHeader("Authorization") String token){
+        String username = jwtUtils.extractUsername(token.substring(7));
+        if(username == null) return new ResponseObject(404, new ResponseData("Token not Valid"));
+        AucUser aucUser = userRepository.findByUsername(username);
+        System.out.println(aucUser.getUsername());
+        if(aucUser == null) return new ResponseObject(404, new ResponseData("User not found"));
+        return new ResponseObject(69, new UserData(aucUser.getName(), aucUser.getUsername(),aucUser.getUsername(), "User Found!"));
     }
 
-    @GetMapping("/")
-    public UserDetails getUserDetails(@PathVariable("id") ObjectId id){
-        UserDetails userDetails = userDetailsRepository.findBy_id(id);
-        return userDetails;
+    @PutMapping
+    public AucUser setUserDetails(@RequestHeader("Authorization") String token, @RequestBody AucUser aucUser){
+        userRepository.save(aucUser);
+        return aucUser;
     }
 
-    @PostMapping("/")
-    public UserDetails setUserDetails(@RequestBody UserDetails userDetails){
-        userDetailsRepository.save(userDetails);
-        return userDetails;
+    @GetMapping("/bids")
+    public ResponseEntity<List<Bid>> getUserBids(@RequestHeader("Authorization") String token){
+        return userService.getUserBids(token);
+    }
+
+    @GetMapping("/auctions")
+    public ResponseEntity<List<Auction>> getUserAuctions(@RequestHeader("Authorization") String token){
+        String username = jwtUtils.extractUsername(token.substring(7));
+        return ResponseEntity.status(200).body(auctionRepository.findByParticipants(username));
     }
 
 
