@@ -10,26 +10,29 @@ public class Auction {
     private ObjectId _id;
 
     private String auctionName;
-    private Double currBid;
+    private String organizerName;
+    private Player current_item;
     private ArrayList<Bid> bidHistory;
     private Long endTime;
+
+
+
     private Long startTime;
-    private ArrayList<String> participants;
-    private String item_id;
+    private ArrayList<Participant> participants;
+    private ArrayList<Player> items;
 
     public Auction() { }
 
-    public Auction(String auctionName, Long endTime, Long startTime, ArrayList<String> participants, String item_id) {
+    public Auction(String auctionName, Long startTime, ArrayList<Participant> participants, String organizerName) {
         this.auctionName = auctionName;
-        this.endTime = endTime;
         this.startTime = startTime;
+        this.organizerName = organizerName;
         this.participants = participants;
-        this.item_id = item_id;
     }
 
 
-    public ArrayList<String> getParticipants() { return participants; }
-    public void setParticipants(ArrayList<String> participants) { this.participants = participants; }
+    public ArrayList<Participant> getParticipants() { return participants; }
+    public void setParticipants(ArrayList<Participant> participants) { this.participants = participants; }
 
     public String getAuctionName() { return auctionName; }
     public void setAuctionName(String auctionName) { this.auctionName = auctionName; }
@@ -37,8 +40,8 @@ public class Auction {
     public ObjectId get_id() { return _id; }
     public void set_id(ObjectId _id) { this._id = _id; }
 
-    public Double getCurrBid() { return currBid; }
-    public void setCurrBid(Double currBid) { this.currBid = currBid; }
+    public Player getCurrent_item() { return current_item; }
+    public void setCurrent_item(Player current_item) { this.current_item = current_item; }
 
     public ArrayList<Bid> getBidHistory() { return bidHistory; }
     public void setBidHistory(ArrayList<Bid> bidHistory) { this.bidHistory = bidHistory; }
@@ -49,7 +52,10 @@ public class Auction {
     public Long getEndTime() { return endTime; }
     public void setEndTime(Long endTime) { this.endTime = endTime; }
 
-    public String getItem_id() { return item_id; }
-    public void setItem_id(String item_id) { this.item_id = item_id; }
+    public ArrayList<Player> getItems() { return items; }
+    public void setItems(ArrayList<Player> items) { this.items = items; }
+
+    public String getOrganizerName() { return organizerName; }
+    public void setOrganizerName(String organizerName) { this.organizerName = organizerName; }
 
 }

@@ -1,34 +1,31 @@
 package com.akcitra.Auctionation.models.requests;
 
+import com.akcitra.Auctionation.models.Participant;
+
 import java.util.ArrayList;
 
 public class AuctionCreateRequest {
-    private String auctionTitle;
+    private String auctionName;
     private Long startTime;
-    private Long endTime;
-    private ArrayList<String> participants;
-    private String item_id;
+    private ArrayList<Participant> participants;
+    private String organizerName;
 
-    public AuctionCreateRequest(String auctionTitle, Long startTime, Long endTime, ArrayList<String> participants, String item_id) {
-        this.auctionTitle = auctionTitle;
+    public AuctionCreateRequest(String auctionTitle, Long startTime, ArrayList<Participant> participants, String organizerName) {
+        this.auctionName = auctionTitle;
         this.startTime = startTime;
-        this.endTime = endTime;
         this.participants = participants;
-        this.item_id = item_id;
+        this.organizerName = organizerName;
     }
 
-    public ArrayList<String> getParticipants() { return participants; }
-    public void setParticipants(ArrayList<String> participants) { this.participants = participants; }
+    public ArrayList<Participant> getParticipants() { return participants; }
+    public void setParticipants(ArrayList<Participant> participants) { this.participants = participants; }
 
     public Long getStartTime() { return startTime; }
     public void setStartTime(Long startTime) { this.startTime = startTime; }
 
-    public Long getEndTime() { return endTime; }
-    public void setEndTime(Long endTime) { this.endTime = endTime; }
+    public String getAuctionName() { return auctionName; }
+    public void setAuctionName(String auctionTitle) { this.auctionName = auctionTitle; }
 
-    public String getAuctionTitle() { return auctionTitle; }
-    public void setAuctionTitle(String auctionTitle) { this.auctionTitle = auctionTitle; }
-
-    public String getItem_id() { return item_id; }
-    public void setItem_id(String item_id) { this.item_id = item_id; }
+    public String getOrganizerName() { return organizerName; }
+    public void setOrganizerName(String item_id) { this.organizerName = item_id; }
 }

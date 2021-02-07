@@ -1,11 +1,10 @@
 package com.akcitra.Auctionation.auction;
 
-import com.akcitra.Auctionation.models.AucUser;
-import com.akcitra.Auctionation.models.Auction;
-import com.akcitra.Auctionation.models.Bid;
+import com.akcitra.Auctionation.models.*;
 import com.akcitra.Auctionation.models.requests.AuctionCreateRequest;
 import com.akcitra.Auctionation.models.responses.ResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
+import com.akcitra.Auctionation.players.PlayerRepository;
 import com.akcitra.Auctionation.user.UserRepository;
 import com.akcitra.Auctionation.util.JwtUtils;
 import com.google.cloud.firestore.CollectionReference;
@@ -25,13 +24,14 @@ public class AuctionService {
     @Autowired JwtUtils jwtUtils;
     @Autowired UserRepository userRepository;
     @Autowired AuctionRepository auctionRepository;
+    @Autowired PlayerRepository playerRepository;
 
 
     public ResponseEntity<ResponseObject> addBid(String token, String roomId, Bid bid) throws ExecutionException, InterruptedException {
         //Sets up Firestore and Initializes 2 Bids Collection Reference.    auction -> {roomId} -> bids
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
-        CollectionReference bidsRef = auctionReference.collection("bids");
+        CollectionReference bidsRef = auctionReference.collection(bid.getItemId());
 
 
         String username = jwtUtils.extractUsername(token.substring(7)); //Gets username from JWT Token
@@ -42,48 +42,35 @@ public class AuctionService {
         if(bid.getBid() > aucUser.getWallet())
             return ResponseEntity.status(500).body(new ResponseObject(500, new ResponseData("Not enough money.")));
 
-        //If the bid is expired
-//        if(auction.getEndTime() < System.currentTimeMillis()){
-//            Bid highestBid = (Bid) bidsRef.orderBy("price").limit(1).get().get().toObjects(Bid.class);
-//            aucUser.setWallet(aucUser.getWallet() - bid.getBid());
-//            bidRepository.save(bid);
-//            return ResponseEntity.status(500).body(new ResponseObject(500, new ResponseData("Expired")));
-//        }
         auctionReference.update("max_bid", bid.getBid());
         bid.setUserId(aucUser.get_id());
         bid.setUsername(username);
+        bid.setName(aucUser.getName());
         bidsRef.document().set(bid); //Adds Bid in the Firebase
 
         return ResponseEntity.status(200).body(new ResponseObject(69, new ResponseData("Bid Added")));
     }
-
-
-
 
     public ResponseEntity<ResponseObject> createAuction(AuctionCreateRequest auctionCreateRequest){
         Firestore dbFirestore = FirestoreClient.getFirestore();
 
         //Auction should be created on MongoDB
         Auction newAuction = new Auction(
-                auctionCreateRequest.getAuctionTitle(),
+                auctionCreateRequest.getAuctionName(),
                 auctionCreateRequest.getStartTime(),
-                auctionCreateRequest.getEndTime(),
                 auctionCreateRequest.getParticipants(),
-                auctionCreateRequest.getItem_id()
+                auctionCreateRequest.getOrganizerName()
         );
         auctionRepository.save(newAuction);
-        newAuction = auctionRepository.findByAuctionName(auctionCreateRequest.getAuctionTitle());
+        newAuction = auctionRepository.findByAuctionName(auctionCreateRequest.getAuctionName());
 
         DocumentReference auctionReference = dbFirestore.collection("auction").document(newAuction.get_id().toString());
         auctionReference.set(newAuction);
+        auctionReference.update("active", true);
 
 
         return ResponseEntity.status(200).body(new ResponseObject(69, new ResponseData("Auction Created")));
     }
-
-
-
-
 
     public ResponseEntity<ResponseObject> getRoom(String token, String room_name) throws ExecutionException, InterruptedException {
         //Checks if there is an username in the jwt token
@@ -92,24 +79,69 @@ public class AuctionService {
 
         //Fetches the Auction
         Auction auction = auctionRepository.findByAuctionName((room_name));
+        if(auction == null) return ResponseEntity.status(500).body(new ResponseObject(500, new ResponseData("Not such Room exists.")));
         System.out.println(auction.getAuctionName());
 
         //Checks if the user is in the invitee list.
         Boolean doesExist = false;
-        ArrayList<String> participants = auction.getParticipants();
-        for(String i: participants){
-            if(i == username){
+        ArrayList<Participant> participants = auction.getParticipants();
+        for(Participant i: participants){
+            if(i.getUsername() == username){
                 doesExist = true;
                 break;
             }
         }
 
         if(!doesExist){
-            ResponseEntity.status(500).body(new ResponseObject(69, new ResponseData("Not allowed in this room")));
+            return ResponseEntity.status(500).body(new ResponseObject(69, new ResponseData("Not allowed in this room")));
         }
 
         return ResponseEntity.status(200).body(new ResponseObject(69, new ResponseData(auction.get_id().toString())));
     }
+
+    public ResponseEntity<ResponseObject> endAuction(String token, String roomId){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
+        auctionReference.update("active", false);
+        return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Auction Closed.")));
+    }
+
+    public ResponseEntity<ResponseObject> endRound(String token, String roomId, String itemId){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
+        Auction auction = (Auction) auctionReference.get();
+        Player currItem = auction.getCurrent_item();
+        CollectionReference bidsRef = auctionReference.collection(currItem.get_id());
+
+        Bid highestBid = (Bid) bidsRef.orderBy("bid").limit(1).get();
+
+        String username = highestBid.getUsername();
+        AucUser highestBidder = userRepository.findByUsername(username);
+
+        highestBidder.setWallet(highestBidder.getWallet() - highestBid.getBid());
+        userRepository.save(highestBidder);
+
+        auctionReference.update("item", null);
+
+        return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Feature under development")));
+
+    }
+
+
+    public ResponseEntity<ResponseObject> addNewItem(String token, String roomId, String itemId){
+        Firestore dbFirestore = FirestoreClient.getFirestore();
+        DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
+
+        Player item = playerRepository.findBy_id(itemId);
+        if(item == null){
+            ResponseEntity.status(400).body(new ResponseObject(400, new ResponseData("Item not found.")));
+        }
+
+        auctionReference.update("item", item);
+        return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Item added")));
+    }
+
+
 
 
 }

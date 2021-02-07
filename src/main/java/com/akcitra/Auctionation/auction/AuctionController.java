@@ -1,6 +1,7 @@
 package com.akcitra.Auctionation.auction;
 
 import com.akcitra.Auctionation.models.Bid;
+import com.akcitra.Auctionation.models.requests.AddItemRequest;
 import com.akcitra.Auctionation.models.requests.AuctionCreateRequest;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,15 @@ public class AuctionController {
     @GetMapping("/room/{room_name}")
     public ResponseEntity<ResponseObject> enterRoom(@RequestHeader("Authorization") String token, @PathVariable String room_name) throws ExecutionException, InterruptedException {
         return auctionService.getRoom(token, room_name);
+    }
+
+    @PostMapping("/end")
+    public ResponseEntity<ResponseObject> endAuction(@RequestHeader("Authorization") String token, @PathVariable String room_name){
+        return auctionService.endAuction(token, room_name);
+    }
+
+    @PutMapping("/room")
+    public ResponseEntity<ResponseObject> addItem(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest){
+        return auctionService.addNewItem(token, itemRequest.getRoomId(), itemRequest.getItemId());
     }
 }
