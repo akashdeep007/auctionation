@@ -40,6 +40,13 @@ public class AuctionController {
 
     @PutMapping("/room")
     public ResponseEntity<ResponseObject> addItem(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest){
+        System.out.println(itemRequest.getItemId() + " " + itemRequest.getRoomId());
         return auctionService.addNewItem(token, itemRequest.getRoomId(), itemRequest.getItemId());
+    }
+
+    @PostMapping("/room")
+    public ResponseEntity<ResponseObject> endRound(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest) throws ExecutionException, InterruptedException {
+        System.out.println(itemRequest.getItemId() + " " + itemRequest.getRoomId());
+        return auctionService.endRound(token, itemRequest.getRoomId(), itemRequest.getItemId());
     }
 }

@@ -7,15 +7,14 @@ import com.akcitra.Auctionation.models.responses.ResponseObject;
 import com.akcitra.Auctionation.players.PlayerRepository;
 import com.akcitra.Auctionation.user.UserRepository;
 import com.akcitra.Auctionation.util.JwtUtils;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -30,6 +29,7 @@ public class AuctionService {
     public ResponseEntity<ResponseObject> addBid(String token, String roomId, Bid bid) throws ExecutionException, InterruptedException {
         //Sets up Firestore and Initializes 2 Bids Collection Reference.    auction -> {roomId} -> bids
         Firestore dbFirestore = FirestoreClient.getFirestore();
+        System.out.println(roomId + " " + bid.getItemId());
         DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
         CollectionReference bidsRef = auctionReference.collection(bid.getItemId());
 
@@ -73,7 +73,6 @@ public class AuctionService {
     }
 
     public ResponseEntity<ResponseObject> getRoom(String token, String room_name) throws ExecutionException, InterruptedException {
-        //Checks if there is an username in the jwt token
         String username = jwtUtils.extractUsername(token.substring(7));
         if(username == null) return ResponseEntity.status(404).body(new ResponseObject(404, new ResponseData("User not Found")));
 
@@ -86,7 +85,8 @@ public class AuctionService {
         Boolean doesExist = false;
         ArrayList<Participant> participants = auction.getParticipants();
         for(Participant i: participants){
-            if(i.getUsername() == username){
+            System.out.println(username + " " + i.getUsername());
+            if(i.getUsername().equals(username)){
                 doesExist = true;
                 break;
             }
@@ -106,27 +106,32 @@ public class AuctionService {
         return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Auction Closed.")));
     }
 
-    public ResponseEntity<ResponseObject> endRound(String token, String roomId, String itemId){
+    public ResponseEntity<ResponseObject> endRound(String token, String roomId, String itemId) throws ExecutionException, InterruptedException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
-        Auction auction = (Auction) auctionReference.get();
-        Player currItem = auction.getCurrent_item();
-        CollectionReference bidsRef = auctionReference.collection(currItem.get_id());
+//        Auction auction = (Auction) auctionReference.get();
+//        Player currItem = auction.getCurrent_item();
+        CollectionReference bidsRef = auctionReference.collection(itemId);
 
-        Bid highestBid = (Bid) bidsRef.orderBy("bid").limit(1).get();
+        QueryDocumentSnapshot docListBids = bidsRef.orderBy("bid", Query.Direction.DESCENDING).limit(1).get().get().getDocuments().get(0);
+//        System.out.println(docListBids.toObject(Bid.class).getUsername());
 
+        Bid highestBid = docListBids.toObject(Bid.class);
         String username = highestBid.getUsername();
         AucUser highestBidder = userRepository.findByUsername(username);
 
         highestBidder.setWallet(highestBidder.getWallet() - highestBid.getBid());
         userRepository.save(highestBidder);
 
+        Player item = playerRepository.findBy_id(highestBid.getItemId());
+        item.setOwnerId(highestBid.getUsername());
+        item.setOwnerName(highestBid.getName());
+        playerRepository.save(item);
         auctionReference.update("item", null);
 
         return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Feature under development")));
 
     }
-
 
     public ResponseEntity<ResponseObject> addNewItem(String token, String roomId, String itemId){
         Firestore dbFirestore = FirestoreClient.getFirestore();
