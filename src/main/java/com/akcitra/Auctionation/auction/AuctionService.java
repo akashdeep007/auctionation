@@ -43,6 +43,7 @@ public class AuctionService {
             return ResponseEntity.status(500).body(new ResponseObject(500, new ResponseData("Not enough money.")));
 
         auctionReference.update("max_bid", bid.getBid());
+        auctionReference.update("max_bid_user", bid.getUsername());
         bid.setUserId(aucUser.get_id());
         bid.setUsername(username);
         bid.setName(aucUser.getName());
@@ -128,6 +129,8 @@ public class AuctionService {
         item.setOwnerName(highestBid.getName());
         playerRepository.save(item);
         auctionReference.update("item", null);
+        auctionReference.update("max_bid", null);
+        auctionReference.update("max_bid_user", null);
 
         return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Feature under development")));
 
