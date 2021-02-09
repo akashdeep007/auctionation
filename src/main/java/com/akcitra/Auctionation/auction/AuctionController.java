@@ -3,6 +3,7 @@ package com.akcitra.Auctionation.auction;
 import com.akcitra.Auctionation.models.Bid;
 import com.akcitra.Auctionation.models.requests.AddItemRequest;
 import com.akcitra.Auctionation.models.requests.AuctionCreateRequest;
+import com.akcitra.Auctionation.models.responses.ResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,25 @@ public class AuctionController {
     }
 
     @PostMapping("/end")
-    public ResponseEntity<ResponseObject> endAuction(@RequestHeader("Authorization") String token, @PathVariable String room_name){
-        return auctionService.endAuction(token, room_name);
+    public ResponseEntity<ResponseObject> endAuction(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest){
+        System.out.println("End Auction Endpoint");
+        return auctionService.endAuction(token, itemRequest.getRoomId());
     }
 
     @PutMapping("/room")
     public ResponseEntity<ResponseObject> addItem(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest){
-        System.out.println(itemRequest.getItemId() + " " + itemRequest.getRoomId());
+        System.out.println("Add Item Endpoint");
         return auctionService.addNewItem(token, itemRequest.getRoomId(), itemRequest.getItemId());
     }
 
     @PostMapping("/room")
     public ResponseEntity<ResponseObject> endRound(@RequestHeader("Authorization") String token, @RequestBody AddItemRequest itemRequest) throws ExecutionException, InterruptedException {
-        System.out.println(itemRequest.getItemId() + " " + itemRequest.getRoomId());
+        System.out.println("End Round Endpoint");
         return auctionService.endRound(token, itemRequest.getRoomId(), itemRequest.getItemId());
+    }
+
+    @GetMapping("/subscription")
+    public ResponseEntity<ResponseObject> firebaseSubscription(@RequestHeader("Authorization") String token, @RequestBody String roomId){
+        return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Firebase Bids collection susbcribed.")));
     }
 }

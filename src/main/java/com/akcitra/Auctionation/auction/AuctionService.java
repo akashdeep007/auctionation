@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -101,6 +100,7 @@ public class AuctionService {
     }
 
     public ResponseEntity<ResponseObject> endAuction(String token, String roomId){
+        System.out.println(roomId + "Here");
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
         auctionReference.update("active", false);
@@ -110,12 +110,9 @@ public class AuctionService {
     public ResponseEntity<ResponseObject> endRound(String token, String roomId, String itemId) throws ExecutionException, InterruptedException {
         Firestore dbFirestore = FirestoreClient.getFirestore();
         DocumentReference auctionReference = dbFirestore.collection("auction").document(roomId);
-//        Auction auction = (Auction) auctionReference.get();
-//        Player currItem = auction.getCurrent_item();
         CollectionReference bidsRef = auctionReference.collection(itemId);
 
         QueryDocumentSnapshot docListBids = bidsRef.orderBy("bid", Query.Direction.DESCENDING).limit(1).get().get().getDocuments().get(0);
-//        System.out.println(docListBids.toObject(Bid.class).getUsername());
 
         Bid highestBid = docListBids.toObject(Bid.class);
         String username = highestBid.getUsername();
@@ -131,6 +128,7 @@ public class AuctionService {
         auctionReference.update("item", null);
         auctionReference.update("max_bid", null);
         auctionReference.update("max_bid_user", null);
+        auctionReference.update("active", "waiting");
 
         return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Feature under development")));
 
@@ -146,6 +144,7 @@ public class AuctionService {
         }
 
         auctionReference.update("item", item);
+        auctionReference.update("active", "true");
         return ResponseEntity.status(200).body(new ResponseObject(200, new ResponseData("Item added")));
     }
 

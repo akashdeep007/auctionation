@@ -11,6 +11,10 @@ public class AddItemRequest {
         this.itemId = itemId;
     }
 
+    public AddItemRequest(String roomId) {
+        this.roomId = roomId;
+    }
+
     public String getItemId() { return itemId; }
     public void setItemId(String itemId) { this.itemId = itemId; }
 
