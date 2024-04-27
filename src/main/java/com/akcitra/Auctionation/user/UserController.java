@@ -4,6 +4,7 @@ import com.akcitra.Auctionation.auction.AuctionRepository;
 import com.akcitra.Auctionation.models.AucUser;
 import com.akcitra.Auctionation.models.Auction;
 import com.akcitra.Auctionation.models.Bid;
+import com.akcitra.Auctionation.models.Participant;
 import com.akcitra.Auctionation.models.responses.ResponseData;
 import com.akcitra.Auctionation.models.responses.ResponseObject;
 import com.akcitra.Auctionation.models.responses.UserData;
@@ -28,11 +29,12 @@ public class UserController {
     @GetMapping
     public ResponseObject getUserDetails(@RequestHeader("Authorization") String token){
         String username = jwtUtils.extractUsername(token.substring(7));
+        System.out.println(username);
         if(username == null) return new ResponseObject(404, new ResponseData("Token not Valid"));
         AucUser aucUser = userRepository.findByUsername(username);
         System.out.println(aucUser.getUsername());
         if(aucUser == null) return new ResponseObject(404, new ResponseData("User not found"));
-        return new ResponseObject(69, new UserData(aucUser.getName(), aucUser.getUsername(),aucUser.getUsername(), "User Found!"));
+        return new ResponseObject(69, new UserData("User Found", aucUser.getUsername(), aucUser.getName(), aucUser.getWallet()));
     }
 
     @PutMapping
@@ -49,7 +51,7 @@ public class UserController {
     @GetMapping("/auctions")
     public ResponseEntity<List<Auction>> getUserAuctions(@RequestHeader("Authorization") String token){
         String username = jwtUtils.extractUsername(token.substring(7));
-        return ResponseEntity.status(200).body(auctionRepository.findByParticipants(username));
+        return ResponseEntity.status(200).body(auctionRepository.findByParticipants_Username(username));
     }
 
 

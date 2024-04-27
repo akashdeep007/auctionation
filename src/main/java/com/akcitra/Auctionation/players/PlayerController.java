@@ -17,14 +17,16 @@ public class PlayerController {
     private PlayerRepository repository;
 
 
-    @RequestMapping( method = RequestMethod.GET )
+    @GetMapping("/all")
     public List<Player> getAllPlayers() {
         return repository.findAll();
     }
 
+    @GetMapping
+    public List<Player> getUnOwnedPlayers(){ return repository.findByOwnerId("NA"); }
 
     @RequestMapping(value="/{id}", method = RequestMethod.GET)
-    public Player getPetById(@PathVariable("id") ObjectId id) {
+    public Player getPetById(@PathVariable("id") String id) {
         return repository.findBy_id(id);
     }
 
@@ -42,7 +44,8 @@ public class PlayerController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void deletePlayer(@PathVariable ObjectId id) {
+    public void deletePlayer(@PathVariable String id) {
         repository.delete(repository.findBy_id(id));
     }
+
 }
